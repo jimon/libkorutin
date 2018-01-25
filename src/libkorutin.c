@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <assert.h>
 
-// ---------------------------------------------------- stack switching
+// -------------------------------------------------------------------------------------- stack switching
 
 /*
 slp_switch is part of pypy stacklet implementation
@@ -43,7 +43,7 @@ STATIC_NOINLINE void *_switch_stack(stack_op_t save_state, stack_op_t restore_st
   return slp_switch((switch_op_t)save_state, (switch_op_t)restore_state, h);
 }
 
-// ---------------------------------------------------- thread aware storage
+// -------------------------------------------------------------------------------------- thread aware storage
 
 #if KORO_THREAD_AWARE
 
@@ -84,7 +84,7 @@ _Thread_local is part of tinycthreads
   #define _koro_Thread_local
 #endif
 
-// ---------------------------------------------------- basics
+// -------------------------------------------------------------------------------------- root functions
 
 static void * align_ptr_low(void * ptr)
 {
@@ -100,6 +100,10 @@ void koro_init(koro_t * h, koro_func_t fn, void *ctx, uint8_t *stack_mem, size_t
   h->ctx = ctx;
   h->stack_end = stack_mem;
   h->stack_start = align_ptr_low(stack_mem + stack_mem_size - 1); // stack grows down
+  #ifdef KORO_WATERMARKING
+  for(uint32_t * ptr = (uint32_t*)h->stack_end; ptr < (uint32_t*)h->stack_start; ++ptr)
+    *ptr = 0xfee1dead;
+  #endif
   h->_stack_org = 0;
   h->_stack_run = 0;
 }
@@ -221,3 +225,20 @@ void koro_yield(void)
 
   _switch_stack(_yield_swap, _yield_cleanup, h);
 }
+
+// -------------------------------------------------------------------------------------- stack usage inspection
+
+#ifdef KORO_WATERMARKING
+size_t koro_calculate_stack_watermark(koro_t * h)
+{
+  if(!h)
+    return 0;
+
+  for(uint32_t * ptr = (uint32_t*)h->stack_end; ptr < (uint32_t*)h->stack_start; ++ptr)
+    if((*ptr) != 0xfee1dead)
+      return (size_t)((uint8_t*)h->stack_start - (uint8_t*)ptr);
+
+  return 0;
+}
+#endif
+

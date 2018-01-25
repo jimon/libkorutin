@@ -70,7 +70,12 @@ int main()
 
   for(size_t i = 0; i < 25; ++i)
   {
-    printf("%s:%u\n", __func__, __LINE__); fflush(stdout);
+    printf("%s:%u %u %u %u %u\n", __func__, __LINE__,
+      (uint32_t)koro_calculate_stack_watermark(&k1),
+      (uint32_t)koro_calculate_stack_watermark(&k2),
+      (uint32_t)koro_calculate_stack_watermark(&k3),
+      (uint32_t)koro_calculate_stack_watermark(&k4)
+    ); fflush(stdout);
     koro_run(&k1);
     koro_run(&k2);
     koro_run(&k3);
