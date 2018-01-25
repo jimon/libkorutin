@@ -4,7 +4,12 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+// define as 1 if you plan to use coroutines from multiple threads
+// (you still can only run one coroutine at a time per thread)
 #define KORO_THREAD_AWARE 0
+
+// must be at least 16 on x64 platforms to store xmm registers
+#define KORO_STACK_ALIGNMENT 16
 
 // coroutine function
 // can return at any time, or can yield

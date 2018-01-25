@@ -32,14 +32,14 @@ slp_switch is part of pypy stacklet implementation
 */
 
 // skip the restore if the return value is null
-typedef void *(*switch_op_t)(void*, void*);
-static void *slp_switch(switch_op_t save_state, switch_op_t restore_state, void *extra);
+#define STATIC_NOINLINE __attribute__((noinline)) static
 #include <slp_platformselect.h>
 
 typedef void *(*stack_op_t)(void*stack_ptr, koro_t*extra);
 // must not inline, otherwise we screw our stack fold/unfold
-__attribute__((noinline)) static void *_switch_stack(stack_op_t save_state, stack_op_t restore_state, koro_t * h)
+STATIC_NOINLINE void *_switch_stack(stack_op_t save_state, stack_op_t restore_state, koro_t * h)
 {
+  typedef void *(*switch_op_t)(void*, void*);
   return slp_switch((switch_op_t)save_state, (switch_op_t)restore_state, h);
 }
 
@@ -86,6 +86,11 @@ _Thread_local is part of tinycthreads
 
 // ---------------------------------------------------- basics
 
+static void * align_ptr_low(void * ptr)
+{
+  return (void*)(((uintptr_t)ptr) & ~(KORO_STACK_ALIGNMENT - 1));
+}
+
 void koro_init(koro_t * h, koro_func_t fn, void *ctx, uint8_t *stack_mem, size_t stack_mem_size)
 {
   if(!h || !fn)
@@ -94,7 +99,7 @@ void koro_init(koro_t * h, koro_func_t fn, void *ctx, uint8_t *stack_mem, size_t
   h->fn = fn;
   h->ctx = ctx;
   h->stack_end = stack_mem;
-  h->stack_start = stack_mem + stack_mem_size - 1; // stack grows up
+  h->stack_start = align_ptr_low(stack_mem + stack_mem_size - 1); // stack grows down
   h->_stack_org = 0;
   h->_stack_run = 0;
 }
@@ -208,5 +213,11 @@ void koro_yield(void)
     return;
 
   koro_t * h = current;
+
+  // sanity check
+  uint8_t byte_on_stack = 0;
+  volatile void * ptr = &byte_on_stack;
+  assert(h->stack_end <= ptr && h->stack_start >= ptr);
+
   _switch_stack(_yield_swap, _yield_cleanup, h);
 }
