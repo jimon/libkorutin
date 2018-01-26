@@ -16,11 +16,18 @@ void koro_init(koro_t * h, koro_func_t fn, void *ctx, uint8_t *stack_mem, size_t
   h->finished = false;
   h->fn = fn;
   h->ctx = ctx;
-  h->stack_end = stack_mem;
-  h->stack_start = align_ptr_low(stack_mem + stack_mem_size - 1); // stack grows down
-  #ifdef KORO_WATERMARKING
-  for(uint32_t * ptr = (uint32_t*)h->stack_end; ptr < (uint32_t*)h->stack_start; ++ptr)
-    *ptr = 0xfee1dead;
+  #ifdef KORO_EXTERNAL_STACK_AWARE
+    h->stack_end = stack_mem;
+    h->stack_start = align_ptr_low(stack_mem + stack_mem_size - 1); // stack grows down
+    #ifdef KORO_WATERMARKING
+      for(uint32_t * ptr = (uint32_t*)h->stack_end; ptr < (uint32_t*)h->stack_start; ++ptr)
+        *ptr = 0xcccccccc;
+    #endif
+  #else
+    (void)stack_mem;
+    (void)stack_mem_size;
+    h->stack_end = NULL;
+    h->stack_start = NULL;
   #endif
   _koro_backend_init(h);
 }
@@ -50,9 +57,11 @@ size_t koro_calculate_stack_watermark(koro_t * h)
   if(!h)
     return 0;
 
-  for(uint32_t * ptr = (uint32_t*)h->stack_end; ptr < (uint32_t*)h->stack_start; ++ptr)
-    if((*ptr) != 0xfee1dead)
-      return (size_t)((uint8_t*)h->stack_start - (uint8_t*)ptr);
+  #ifdef KORO_EXTERNAL_STACK_AWARE
+    for(uint32_t * ptr = (uint32_t*)h->stack_end; ptr < (uint32_t*)h->stack_start; ++ptr)
+      if((*ptr) != 0xcccccccc)
+        return (size_t)((uint8_t*)h->stack_start - (uint8_t*)ptr);
+  #endif
 
   return 0;
 }

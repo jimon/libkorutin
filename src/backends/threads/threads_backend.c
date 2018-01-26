@@ -19,34 +19,32 @@
 typedef struct
 {
   thrd_t thrd;
-  mtx_t mtx;
-  cnd_t cnd_run_wait;
-  cnd_t cnd_yield_wait;
+  mtx_t mtx_a;
+  mtx_t mtx_b;
+  mtx_t mtx_c;
+  mtx_t mtx_d;
+
+  cnd_t cnd_a;
+  cnd_t cnd_b;
+//  cnd_t cnd_c;
 } _thread_ctx;
 
-#define MARK {printf("%s:%u %p\n", __func__, __LINE__, h); fflush(stdout);}
-//#define MARK {}
+#define CTX(__h) (_thread_ctx*)(__h)->a;
 
 static int _thread_runner(koro_t * h)
 {
-  _thread_ctx * ctx = (_thread_ctx*)h->_thrd;
+  _thread_ctx * ctx = CTX(h);
 
-  MARK;
+  cnd_wait(&ctx->cnd_a, &ctx->mtx_a);
 
-  // wait until run unblocks us first time
-  cnd_wait(&ctx->cnd_yield_wait, &ctx->mtx);
-
-  MARK;
+//  mtx_lock(&ctx->mtx_c);
+//  mtx_lock(&ctx->mtx_a);
 
   h->fn(h->ctx);
+
+  cnd_signal(&ctx->cnd_b); // make it run
+
   h->finished = true;
-
-  MARK;
-
-  // unblock run
-  cnd_signal(&ctx->cnd_run_wait);
-
-  MARK;
 
   return 0;
 }
@@ -57,11 +55,22 @@ void _koro_backend_init(koro_t * h)
     return;
 
   _thread_ctx * ctx = (_thread_ctx*)malloc(sizeof(_thread_ctx));
-  mtx_init(&ctx->mtx, mtx_plain);
-  cnd_init(&ctx->cnd_run_wait);
-  cnd_init(&ctx->cnd_yield_wait);
+
+  mtx_init(&ctx->mtx_a, mtx_plain);
+  mtx_init(&ctx->mtx_b, mtx_plain);
+  mtx_init(&ctx->mtx_c, mtx_plain);
+  mtx_init(&ctx->mtx_d, mtx_plain);
+//  mtx_init(&ctx->mtx_c, mtx_plain);
+  cnd_init(&ctx->cnd_a);
+  cnd_init(&ctx->cnd_b);
+//  cnd_init(&ctx->cnd_c);
+
+//  mtx_lock(&ctx->mtx_a);
+
   thrd_create(&ctx->thrd, _thread_runner, h);
-  h->_thrd = ctx;
+//  thrd_detach(&ctx->thrd);
+
+  h->a = (uintptr_t)ctx;
 }
 
 void _koro_run(koro_t * h)
@@ -69,25 +78,15 @@ void _koro_run(koro_t * h)
   if(!h || h->finished)
     return;
 
-  _thread_ctx * ctx = (_thread_ctx*)h->_thrd;
+  _thread_ctx * ctx = CTX(h);
 
-  MARK;
+  cnd_signal(&ctx->cnd_a); // make it run
 
-  // unblock either first run, or yield
-  cnd_signal(&ctx->cnd_yield_wait);
+  //mtx_lock(&ctx->mtx_d);
+  cnd_wait(&ctx->cnd_b, &ctx->mtx_b); // wait until yield
+  //mtx_unlock(&ctx->mtx_c);
 
-  MARK;
 
-  // wait for yield
-  cnd_wait(&ctx->cnd_run_wait, &ctx->mtx);
-
-  MARK;
-
-  if(h->finished)
-  {
-    thrd_join(&ctx->thrd, NULL);
-    // clean up
-  }
 }
 
 void _koro_yield(koro_t * h)
@@ -95,17 +94,24 @@ void _koro_yield(koro_t * h)
   if(!h)
     return;
 
-  _thread_ctx * ctx = (_thread_ctx*)h->_thrd;
+  _thread_ctx * ctx = CTX(h);
 
-  MARK;
+//  mtx_lock(&ctx->mtx_b);
+//  mtx_unlock(&ctx->mtx_yield);
 
-  cnd_signal(&ctx->cnd_run_wait);
+//  while(!ctx->cnd_b.mWaitersCount) {}
 
-  MARK;
+  cnd_signal(&ctx->cnd_b);
 
-  cnd_wait(&ctx->cnd_yield_wait, &ctx->mtx);
+  cnd_wait(&ctx->cnd_a, &ctx->mtx_a);
 
-  MARK;
+//  cnd_signal(&ctx->cnd_c);
+
+  struct timespec t;
+  t.tv_sec = 0;
+  t.tv_nsec = 10000000;
+//  thrd_sleep(&t, NULL);
+
 }
 
 #endif

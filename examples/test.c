@@ -5,13 +5,16 @@
 #include <stdlib.h>
 
 static int * foo = NULL;
+static int i = 0;
 
 void test_co1(void * ctx)
 {
-  int a = 12345;
+  int a = 12345; // TODO
   foo = &a; // stack data can be shared between coroutines
-  for(int i = 0; i < 20; ++i)
+//  for(int i = 0; i < 20; ++i)
+  while(true)
   {
+    ++i;
     printf("%s:%u %p %i %i\n", __func__, __LINE__, ctx, i, *foo); fflush(stdout);
     koro_yield();
   }
@@ -19,8 +22,9 @@ void test_co1(void * ctx)
 
 void test_co2(void * ctx)
 {
-  for(int i = 0; i < 10; ++i)
+  while(true)
   {
+    ++i;
     printf("%s:%u %p %i %i\n", __func__, __LINE__, ctx, i, *foo); fflush(stdout);
     koro_yield();
   }
@@ -38,8 +42,9 @@ static void test_co3_helper1(void)
 
 void test_co3(void * ctx)
 {
-  for(int i = 0; i < 5; ++i)
+  while(true)
   {
+    ++i;
     printf("%s:%u %p %i %i\n", __func__, __LINE__, ctx, i, *foo); fflush(stdout);
     test_co3_helper1();
   }
@@ -68,14 +73,15 @@ int main()
   koro_init(&k3, test_co3, &k3, stack3, sizeof(stack3));
   koro_init(&k4, test_co4, &k4, stack4, sizeof(stack4));
 
-  for(size_t i = 0; i < 25; ++i)
+  //for(size_t i = 0; i < 25; ++i)
+  while(true)
   {
-    printf("%s:%u %u %u %u %u\n", __func__, __LINE__,
-      (uint32_t)koro_calculate_stack_watermark(&k1),
-      (uint32_t)koro_calculate_stack_watermark(&k2),
-      (uint32_t)koro_calculate_stack_watermark(&k3),
-      (uint32_t)koro_calculate_stack_watermark(&k4)
-    ); fflush(stdout);
+//    printf("%s:%u %u %u %u %u\n", __func__, __LINE__,
+//      (uint32_t)koro_calculate_stack_watermark(&k1),
+//      (uint32_t)koro_calculate_stack_watermark(&k2),
+//      (uint32_t)koro_calculate_stack_watermark(&k3),
+//      (uint32_t)koro_calculate_stack_watermark(&k4)
+//    ); fflush(stdout);
     koro_run(&k1);
     koro_run(&k2);
     koro_run(&k3);

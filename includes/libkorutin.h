@@ -40,14 +40,8 @@ typedef struct
   void * stack_end;
   void * stack_start;
 
-  // private pointers
-  #if KORO_BACKEND_SWITCH
-  void * _stack_org;
-  void * _stack_run;
-  #endif
-  #if KORO_BACKEND_THREADS
-  void * _thrd;
-  #endif
+  // private data
+  uintptr_t a, b;
 } koro_t;
 
 // -------------------------------------------------------------------------------------- root functions
