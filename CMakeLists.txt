@@ -15,10 +15,12 @@ project(${PRJ_TARGET})
 
 set(headers
 	${ROOT}/includes/libkorutin.h
+	${ROOT}/src/scheduling.h
 	${ROOT}/src/backend.h
 )
 set(src
 	${ROOT}/src/libkorutin.c
+	${ROOT}/src/scheduling.c
 )
 
 # -----------------------------------------------------------------------------
