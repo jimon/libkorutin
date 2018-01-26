@@ -12,7 +12,7 @@ void test_co1(void * ctx)
   foo = &a; // stack data can be shared between coroutines
   for(int i = 0; i < 20; ++i)
   {
-    printf("%s:%u %p %i %i\n", __func__, __LINE__, &i, i, *foo); fflush(stdout);
+    printf("%s:%u %p %i %i\n", __func__, __LINE__, ctx, i, *foo); fflush(stdout);
     koro_yield();
   }
 }
@@ -21,7 +21,7 @@ void test_co2(void * ctx)
 {
   for(int i = 0; i < 10; ++i)
   {
-    printf("%s:%u %p %i %i\n", __func__, __LINE__, &i, i, *foo); fflush(stdout);
+    printf("%s:%u %p %i %i\n", __func__, __LINE__, ctx, i, *foo); fflush(stdout);
     koro_yield();
   }
 }
@@ -40,14 +40,14 @@ void test_co3(void * ctx)
 {
   for(int i = 0; i < 5; ++i)
   {
-    printf("%s:%u %p %i %i\n", __func__, __LINE__, &i, i, *foo); fflush(stdout);
+    printf("%s:%u %p %i %i\n", __func__, __LINE__, ctx, i, *foo); fflush(stdout);
     test_co3_helper1();
   }
 }
 
 void test_co4(void * ctx)
 {
-  printf("%s:%u\n", __func__, __LINE__); fflush(stdout);
+  printf("%s:%u %p\n", __func__, __LINE__, ctx); fflush(stdout);
   // coroutines can exit just fine
 }
 
@@ -63,10 +63,10 @@ int main()
   uint8_t stack3[4 * 1024];
   uint8_t stack4[4 * 1024];
 
-  koro_init(&k1, test_co1, NULL, stack1, sizeof(stack1));
-  koro_init(&k2, test_co2, NULL, stack2, sizeof(stack2));
-  koro_init(&k3, test_co3, NULL, stack3, sizeof(stack3));
-  koro_init(&k4, test_co4, NULL, stack4, sizeof(stack4));
+  koro_init(&k1, test_co1, &k1, stack1, sizeof(stack1));
+  koro_init(&k2, test_co2, &k2, stack2, sizeof(stack2));
+  koro_init(&k3, test_co3, &k3, stack3, sizeof(stack3));
+  koro_init(&k4, test_co4, &k4, stack4, sizeof(stack4));
 
   for(size_t i = 0; i < 25; ++i)
   {

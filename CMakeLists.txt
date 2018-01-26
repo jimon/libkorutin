@@ -79,9 +79,7 @@ if(BACKEND_SWITCH)
 	target_include_directories(${PRJ_TARGET} PRIVATE
 		${ROOT}/src/backends/switch
 	)
-	target_compile_definitions(${PRJ_TARGET} PRIVATE KORO_BACKEND_SWITCH=1)
-else()
-	target_compile_definitions(${PRJ_TARGET} PRIVATE KORO_BACKEND_SWITCH=0)
+	target_compile_definitions(${PRJ_TARGET} PRIVATE KORO_BACKEND_SWITCH)
 endif()
 
 # -----------------------------------------------------------------------------
@@ -90,9 +88,7 @@ if(BACKEND_THREADS)
 	target_include_directories(${PRJ_TARGET} PRIVATE
 		${ROOT}/src/backends/threads
 	)
-	target_compile_definitions(${PRJ_TARGET} PRIVATE KORO_BACKEND_THREADS=1)
-else()
-	target_compile_definitions(${PRJ_TARGET} PRIVATE KORO_BACKEND_THREADS=0)
+	target_compile_definitions(${PRJ_TARGET} PRIVATE KORO_BACKEND_THREADS)
 endif()
 
 # -----------------------------------------------------------------------------

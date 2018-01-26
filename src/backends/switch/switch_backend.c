@@ -1,4 +1,7 @@
-#include "libkorutin.h"
+#include <libkorutin.h>
+
+#ifdef KORO_BACKEND_SWITCH
+
 #include <assert.h>
 
 // -------------------------------------------------------------------------------------- stack switching
@@ -132,7 +135,8 @@ static void * _yield_cleanup(void * stack_new, koro_t * h)
 
 void _koro_backend_init(koro_t * h)
 {
-  // no op
+  h->_stack_org = 0;
+  h->_stack_run = 0;
 }
 
 void _koro_run(koro_t * h)
@@ -159,3 +163,4 @@ void _koro_yield(koro_t * h)
   _switch_stack(_yield_swap, _yield_cleanup, h);
 }
 
+#endif

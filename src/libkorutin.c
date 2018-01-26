@@ -1,4 +1,4 @@
-#include "libkorutin.h"
+#include <libkorutin.h>
 #include "scheduling.h"
 #include "backend.h"
 
@@ -22,8 +22,6 @@ void koro_init(koro_t * h, koro_func_t fn, void *ctx, uint8_t *stack_mem, size_t
   for(uint32_t * ptr = (uint32_t*)h->stack_end; ptr < (uint32_t*)h->stack_start; ++ptr)
     *ptr = 0xfee1dead;
   #endif
-  h->_stack_org = 0;
-  h->_stack_run = 0;
   _koro_backend_init(h);
 }
 
