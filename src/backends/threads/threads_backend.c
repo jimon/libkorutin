@@ -21,12 +21,8 @@ typedef struct
   thrd_t thrd;
   mtx_t mtx_a;
   mtx_t mtx_b;
-  mtx_t mtx_c;
-  mtx_t mtx_d;
-
   cnd_t cnd_a;
   cnd_t cnd_b;
-//  cnd_t cnd_c;
 } _thread_ctx;
 
 #define CTX(__h) (_thread_ctx*)(__h)->a;
@@ -34,18 +30,11 @@ typedef struct
 static int _thread_runner(koro_t * h)
 {
   _thread_ctx * ctx = CTX(h);
-
   cnd_wait(&ctx->cnd_a, &ctx->mtx_a);
-
-//  mtx_lock(&ctx->mtx_c);
-//  mtx_lock(&ctx->mtx_a);
-
   h->fn(h->ctx);
-
-  cnd_signal(&ctx->cnd_b); // make it run
-
   h->finished = true;
-
+  cnd_signal(&ctx->cnd_b);
+  thrd_exit(0);
   return 0;
 }
 
@@ -58,18 +47,9 @@ void _koro_backend_init(koro_t * h)
 
   mtx_init(&ctx->mtx_a, mtx_plain);
   mtx_init(&ctx->mtx_b, mtx_plain);
-  mtx_init(&ctx->mtx_c, mtx_plain);
-  mtx_init(&ctx->mtx_d, mtx_plain);
-//  mtx_init(&ctx->mtx_c, mtx_plain);
   cnd_init(&ctx->cnd_a);
   cnd_init(&ctx->cnd_b);
-//  cnd_init(&ctx->cnd_c);
-
-//  mtx_lock(&ctx->mtx_a);
-
   thrd_create(&ctx->thrd, _thread_runner, h);
-//  thrd_detach(&ctx->thrd);
-
   h->a = (uintptr_t)ctx;
 }
 
@@ -80,13 +60,18 @@ void _koro_run(koro_t * h)
 
   _thread_ctx * ctx = CTX(h);
 
-  cnd_signal(&ctx->cnd_a); // make it run
+  cnd_signal(&ctx->cnd_a);
+  cnd_wait(&ctx->cnd_b, &ctx->mtx_b);
 
-  //mtx_lock(&ctx->mtx_d);
-  cnd_wait(&ctx->cnd_b, &ctx->mtx_b); // wait until yield
-  //mtx_unlock(&ctx->mtx_c);
-
-
+  if(h->finished)
+  {
+    cnd_destroy(&ctx->cnd_a);
+    cnd_destroy(&ctx->cnd_b);
+    mtx_destroy(&ctx->mtx_a);
+    mtx_destroy(&ctx->mtx_b);
+    free(ctx);
+    h->ctx = NULL;
+  }
 }
 
 void _koro_yield(koro_t * h)
@@ -94,24 +79,11 @@ void _koro_yield(koro_t * h)
   if(!h)
     return;
 
+  thrd_yield();
+
   _thread_ctx * ctx = CTX(h);
-
-//  mtx_lock(&ctx->mtx_b);
-//  mtx_unlock(&ctx->mtx_yield);
-
-//  while(!ctx->cnd_b.mWaitersCount) {}
-
   cnd_signal(&ctx->cnd_b);
-
   cnd_wait(&ctx->cnd_a, &ctx->mtx_a);
-
-//  cnd_signal(&ctx->cnd_c);
-
-  struct timespec t;
-  t.tv_sec = 0;
-  t.tv_nsec = 10000000;
-//  thrd_sleep(&t, NULL);
-
 }
 
 #endif
