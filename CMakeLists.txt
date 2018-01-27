@@ -114,6 +114,9 @@ if(BACKEND_CONTEXT)
 	target_include_directories(${PRJ_TARGET}_context PRIVATE
 		${private_includes_core}
 	)
+	target_compile_definitions(${PRJ_TARGET}_context PRIVATE
+		BOOST_CONTEXT_EXPORT
+	)
 	target_compile_definitions(${PRJ_TARGET}_context PUBLIC
 		KORO_BACKEND_CONTEXT
 	)
