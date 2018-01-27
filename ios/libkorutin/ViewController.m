@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 
+double benchmark(size_t coroutine_count, size_t cycles_per_tick_count);
+
 @interface ViewController ()
 
 @end
@@ -17,6 +19,16 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+
+	dispatch_queue_t backgroundQueue = dispatch_queue_create("com.mycompany.myqueue", 0);
+
+	dispatch_async(backgroundQueue, ^{
+		double val = benchmark(1024, 1000);
+
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self.perf1 setText:[NSString stringWithFormat:@"%f", val]];
+		});
+	});
 }
 
 
