@@ -1,11 +1,11 @@
 
-#define COROUTINE_COUNT       (16 * 1024)
-#define CYCLES_PER_TICK_COUNT 1000
+#define SAMPLES_COUNT         32
 #define STACK_SIZE            1024
 
 #include <libkorutin.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 #include <signal.h>
 
@@ -39,6 +39,8 @@ int gettimeofday(struct timeval * tp, struct timezone * tzp)
   tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
   return 0;
 }
+#else
+#include <sys/time.h>
 #endif
 
 typedef struct
@@ -62,32 +64,32 @@ static void int_handler(int foo)
   run = 0;
 }
 
-int main()
+double benchmark(size_t coroutine_count, size_t cycles_per_tick_count)
 {
-  signal(SIGINT, int_handler);
+  koro_t * k = malloc(sizeof(koro_t) * coroutine_count);
+  memset(k, 0, sizeof(koro_t) * coroutine_count);
 
-  koro_t * k = malloc(sizeof(koro_t) * COROUTINE_COUNT);
-  memset(k, 0, sizeof(koro_t) * COROUTINE_COUNT);
+  co_ctx_t * ctx = malloc(sizeof(co_ctx_t) * coroutine_count);
+  memset(ctx, 0, sizeof(co_ctx_t) * coroutine_count);
 
-  co_ctx_t * ctx = malloc(sizeof(co_ctx_t) * COROUTINE_COUNT);
-  memset(ctx, 0, sizeof(co_ctx_t) * COROUTINE_COUNT);
-
-  for(size_t i = 0; i < COROUTINE_COUNT; ++i)
-    koro_init(k + i, _co, ctx + i, malloc(STACK_SIZE), STACK_SIZE);
+  for(size_t i = 0; i < coroutine_count; ++i)
+    koro_init(k + i, (koro_func_t)_co, ctx + i, malloc(STACK_SIZE), STACK_SIZE);
 
   size_t round = 0;
+  size_t count = 0;
+  double samples[SAMPLES_COUNT] = {0};
 
-  while(run)
+  while(run && count < SAMPLES_COUNT)
   {
     struct timeval before, after;
     gettimeofday(&before, NULL);
 
     // run a cycle
     size_t switches = 0;
-    for(size_t c = 0; c < CYCLES_PER_TICK_COUNT; ++c)
+    for(size_t c = 0; c < cycles_per_tick_count; ++c)
     {
       round++;
-      for(size_t i = 0; i < COROUTINE_COUNT; ++i)
+      for(size_t i = 0; i < coroutine_count; ++i)
       {
         koro_run(k + i);
         switches++;
@@ -97,19 +99,53 @@ int main()
     gettimeofday(&after, NULL);
 
     double elapsed = (after.tv_sec - before.tv_sec) + ((after.tv_usec - before.tv_usec) / 1000000.0);
+    double switches_per_sec = (double)switches / elapsed;
+    samples[count++] = switches_per_sec;
 
-    printf("%.1f switches/sec\n", (double)switches / elapsed); fflush(stdout);
+    printf("%u:%u: %.1f switches/sec\n", (uint32_t)coroutine_count, (uint32_t)count, switches_per_sec); fflush(stdout);
 
     // check that all coroutines executed equal amount
-    for(size_t i = 0; i < COROUTINE_COUNT; ++i)
+    for(size_t i = 0; i < coroutine_count; ++i)
       assert(ctx[i].i == round);
   }
 
-  for(size_t i = 0; i < COROUTINE_COUNT; ++i)
+  for(size_t i = 0; i < coroutine_count; ++i)
     free(k[i].stack_mem);
 
   free(ctx);
   free(k);
+
+  double avg = 0.0;
+  for(size_t i = 0; i < SAMPLES_COUNT; ++i)
+    avg += samples[i];
+  avg /= (double)SAMPLES_COUNT;
+  return avg;
+}
+
+int main()
+{
+  signal(SIGINT, int_handler);
+
+  #ifdef KORO_BACKEND_SWITCH
+    double perf_1024 = benchmark(1024, 1000);
+    double perf_16384 = benchmark(16384, 50);
+
+    printf("results:\n");
+    printf("%u: %.1f switches/sec\n", 1024, perf_1024); fflush(stdout);
+    printf("%u: %.1f switches/sec\n", 16384, perf_16384); fflush(stdout);
+  #endif
+
+  #ifdef KORO_BACKEND_THREADS
+    double perf_32 = benchmark(32, 200);
+    double perf_64 = benchmark(64, 50);
+    double perf_128 = benchmark(128, 10);
+
+    printf("results:\n");
+    printf("%u: %.1f switches/sec\n", 32, perf_32); fflush(stdout);
+    printf("%u: %.1f switches/sec\n", 64, perf_64); fflush(stdout);
+    printf("%u: %.1f switches/sec\n", 128, perf_128); fflush(stdout);
+  #endif
+
 
   return 0;
 }

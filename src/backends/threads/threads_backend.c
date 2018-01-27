@@ -81,7 +81,7 @@ void _koro_backend_init(koro_t * h)
   h->a = (uintptr_t)ctx;
   ctx->wait_run = false;
   ctx->wait_yield = false;
-  thrd_create(&ctx->thrd, _thread_runner, h);
+  thrd_create(&ctx->thrd, (thrd_start_t)_thread_runner, h);
 }
 
 void _koro_run(koro_t * h)
