@@ -217,9 +217,7 @@ if(BACKEND_THREADS)
 		KORO_BACKEND_THREADS
 	)
 	if(NOT WIN32)
-		target_compile_options(${PRJ_TARGET}_threads PUBLIC
-			"-pthread"
-		)
+		target_link_libraries(${PRJ_TARGET}_threads PRIVATE pthread)
 	endif()
 endif()
 
