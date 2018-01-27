@@ -48,18 +48,18 @@ STATIC_NOINLINE void *_switch_stack(stack_op_t save_state, stack_op_t restore_st
 static void * _finished_swap(void * stack_old, koro_t * h)
 {
   assert(h->stack_end <= stack_old && h->stack_start >= stack_old);
-  assert(h->_stack_org != NULL);
-  assert(h->_stack_run == NULL);
-  return h->_stack_org;
+  assert(h->a != 0);
+  assert(h->b == 0);
+  return (void*)h->a;
 }
 
 static void * _finished_cleanup(void * stack_new, koro_t * h)
 {
-  assert(h->_stack_org == stack_new);
-  assert(h->_stack_run == NULL);
+  assert(h->a == (uintptr_t)stack_new);
+  assert(h->b == 0);
 
   h->finished = true;
-  h->_stack_org = NULL;
+  h->a = 0;
   return NULL;
 }
 
@@ -67,17 +67,17 @@ static void * _init_swap(void * stack_old, koro_t * h)
 {
   assert(h->stack_end != NULL);
   assert(h->stack_start != NULL);
-  assert(h->_stack_org == NULL);
-  assert(h->_stack_run == NULL);
+  assert(h->a == 0);
+  assert(h->b == 0);
 
-  h->_stack_org = stack_old;
+  h->a = (uintptr_t)stack_old;
   return h->stack_start;
 }
 
 static void * _init_run(void * stack_new, koro_t * h)
 {
   assert(h->stack_start == stack_new);
-  assert(h->_stack_org != NULL);
+  assert(h->a != 0);
   assert(!h->finished);
 
   // run coroutine, it will be a first stack frame in this stack
@@ -96,38 +96,38 @@ static void * _init_run(void * stack_new, koro_t * h)
 
 static void * _run_swap(void * stack_old, koro_t * h)
 {
-  assert(h->_stack_org == NULL);
-  assert(h->_stack_run != NULL);
+  assert(h->a == 0);
+  assert(h->b != 0);
 
-  h->_stack_org = stack_old;
-  return h->_stack_run;
+  h->a = (uintptr_t)stack_old;
+  return (void*)h->b;
 }
 
 static void * _restore_noop(void * stack_new, koro_t * h)
 {
-  assert(h->_stack_org != NULL);
-  assert(h->_stack_run == stack_new);
+  assert(h->a != 0);
+  assert(h->b == (uintptr_t)stack_new);
 
-  h->_stack_run = NULL;
+  h->b = 0;
   return NULL;
 }
 
 static void * _yield_swap(void * stack_old, koro_t * h)
 {
   assert(h->stack_end <= stack_old && h->stack_start >= stack_old);
-  assert(h->_stack_org != NULL);
-  assert(h->_stack_run == NULL);
+  assert(h->a != 0);
+  assert(h->b == 0);
 
-  h->_stack_run = stack_old;
-  return h->_stack_org;
+  h->b = (uintptr_t)stack_old;
+  return (void*)h->a;
 }
 
 static void * _yield_cleanup(void * stack_new, koro_t * h)
 {
-  assert(h->_stack_org == stack_new);
-  assert(h->_stack_run != NULL);
+  assert(h->a == (uintptr_t)stack_new);
+  assert(h->b != 0);
 
-  h->_stack_org = NULL;
+  h->a = 0;
   return NULL;
 }
 
@@ -135,8 +135,8 @@ static void * _yield_cleanup(void * stack_new, koro_t * h)
 
 void _koro_backend_init(koro_t * h)
 {
-  h->_stack_org = 0;
-  h->_stack_run = 0;
+  h->a = 0;
+  h->b = 0;
 }
 
 void _koro_run(koro_t * h)
@@ -144,7 +144,7 @@ void _koro_run(koro_t * h)
   if(!h || h->finished)
     return;
 
-  if(h->_stack_run)
+  if(h->b)
     _switch_stack(_run_swap, _restore_noop, h);
   else
     _switch_stack(_init_swap, _init_run, h);
@@ -157,7 +157,7 @@ void _koro_yield(koro_t * h)
 
   // sanity check
   uint8_t byte_on_stack = 0;
-  volatile void * ptr = &byte_on_stack;
+  void * ptr = &byte_on_stack;
   assert(h->stack_end <= ptr && h->stack_start >= ptr);
 
   _switch_stack(_yield_swap, _yield_cleanup, h);
