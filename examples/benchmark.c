@@ -1,7 +1,7 @@
 
-#define COROUTINE_COUNT (16 * 1024)
-#define STACK_SIZE 1024
-#define CYCLES_PER_TICK_COUNT 100
+#define COROUTINE_COUNT       (16 * 1024)
+#define CYCLES_PER_TICK_COUNT 1000
+#define STACK_SIZE            1024
 
 #include <libkorutin.h>
 #include <stdio.h>
