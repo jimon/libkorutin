@@ -11,6 +11,8 @@
 @interface ViewController : UIViewController
 
 @property (weak) IBOutlet UILabel * perf1;
+@property (weak) IBOutlet UILabel * perf2;
+@property (weak) IBOutlet UILabel * perf3;
 
 @end
 
