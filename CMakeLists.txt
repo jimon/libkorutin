@@ -98,4 +98,7 @@ endif()
 if(EXAMPLES)
 	add_executable(${PRJ_TARGET}_test examples/test.c)
 	target_link_libraries(${PRJ_TARGET}_test PUBLIC ${PRJ_TARGET})
+
+	add_executable(${PRJ_TARGET}_benchmark examples/benchmark.c)
+	target_link_libraries(${PRJ_TARGET}_benchmark PUBLIC ${PRJ_TARGET})
 endif()

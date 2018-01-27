@@ -22,6 +22,7 @@ void koro_init(koro_t * h, koro_func_t fn, void *ctx, uint8_t *stack_mem, size_t
   h->finished = false;
   h->fn = fn;
   h->ctx = ctx;
+  h->stack_mem = stack_mem;
   #ifdef KORO_EXTERNAL_STACK_AWARE
     h->stack_end = stack_mem;
     h->stack_start = align_ptr_low(stack_mem + stack_mem_size - 1); // stack grows down
@@ -68,6 +69,12 @@ void koro_yield(void)
 
   koro_t * h = _koro_get_current();
   assert(h->magic == koro_magic);
+
+  #ifdef KORO_WATERMARKING
+  // check that final stack pointer is still watermarked
+  // otherwise there is a huge chance that stack was overflown
+  assert(*(uint32_t*)h->stack_end == koro_watermarking_const);
+  #endif
 
   _koro_yield(h);
 }

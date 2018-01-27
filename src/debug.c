@@ -29,17 +29,17 @@ void _koro_set_hw_break_at(void * ptr)
   default: return;
   }
 
-  CONTEXT cxt = {0};
-  cxt.ContextFlags = CONTEXT_DEBUG_REGISTERS;
+  CONTEXT ctx = {0};
+  ctx.ContextFlags = CONTEXT_DEBUG_REGISTERS;
 
   HANDLE t = GetCurrentThread();
-  if(!GetThreadContext(t, &cxt))
+  if(!GetThreadContext(t, &ctx))
     return;
 
   uintmax_t index = 0;
   bool set = false;
   for(uintmax_t i = 0; i < 4; ++i)
-    if((cxt.Dr7 & (UINTMAX_C(1) << (i * UINTMAX_C(2)))) == 0)
+    if((ctx.Dr7 & (UINTMAX_C(1) << (i * UINTMAX_C(2)))) == 0)
     {
       index = i;
       set = true;
@@ -50,44 +50,44 @@ void _koro_set_hw_break_at(void * ptr)
 
   switch(index)
   {
-  case 0: cxt.Dr0 = (uintptr_t)ptr; break;
-  case 1: cxt.Dr1 = (uintptr_t)ptr; break;
-  case 2: cxt.Dr2 = (uintptr_t)ptr; break;
-  case 3: cxt.Dr3 = (uintptr_t)ptr; break;
+  case 0: ctx.Dr0 = (uintptr_t)ptr; break;
+  case 1: ctx.Dr1 = (uintptr_t)ptr; break;
+  case 2: ctx.Dr2 = (uintptr_t)ptr; break;
+  case 3: ctx.Dr3 = (uintptr_t)ptr; break;
   default: return;
   }
 
-  SetBits(&cxt.Dr7, 16 + (index * 4), 2, when);
-  SetBits(&cxt.Dr7, 18 + (index * 4), 2, len);
-  SetBits(&cxt.Dr7, index * 2,        1, 1);
+  SetBits(&ctx.Dr7, 16 + (index * 4), 2, when);
+  SetBits(&ctx.Dr7, 18 + (index * 4), 2, len);
+  SetBits(&ctx.Dr7, index * 2,        1, 1);
 
-  SetThreadContext(t, &cxt);
+  SetThreadContext(t, &ctx);
 }
 
 void _koro_clear_hw_break(void * ptr)
 {
-  CONTEXT cxt = {0};
-  cxt.ContextFlags = CONTEXT_DEBUG_REGISTERS;
+  CONTEXT ctx = {0};
+  ctx.ContextFlags = CONTEXT_DEBUG_REGISTERS;
 
   HANDLE t = GetCurrentThread();
-  if(!GetThreadContext(t, &cxt))
+  if(!GetThreadContext(t, &ctx))
     return;
 
   uintmax_t index = 0;
-  if(cxt.Dr0 == (uintptr_t)ptr)
+  if(ctx.Dr0 == (uintptr_t)ptr)
     index = 0;
-  else if(cxt.Dr1 == (uintptr_t)ptr)
+  else if(ctx.Dr1 == (uintptr_t)ptr)
     index = 1;
-  else if(cxt.Dr2 == (uintptr_t)ptr)
+  else if(ctx.Dr2 == (uintptr_t)ptr)
     index = 2;
-  else if(cxt.Dr3 == (uintptr_t)ptr)
+  else if(ctx.Dr3 == (uintptr_t)ptr)
     index = 3;
   else
     return;
 
-  SetBits(&cxt.Dr7, index * 2, 1, 0);
+  SetBits(&ctx.Dr7, index * 2, 1, 0);
 
-  SetThreadContext(t, &cxt);
+  SetThreadContext(t, &ctx);
 }
 
 #else

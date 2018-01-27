@@ -19,11 +19,11 @@ extern "C" {
 
 // enable or disable watermarking, this fills whole stack with 0xfee1dead value
 // and later use it to figure out peak stack usage (watermark)
-#define KORO_WATERMARKING
+//#define KORO_WATERMARKING
 
 // on supported platforms adds hardware breakpoint at the end of provided stack
 // this will allow to catch stack corruption when using stack heavy functions
-#define KORO_SET_HARDWARE_BREAKPOINTS
+//#define KORO_SET_HARDWARE_BREAKPOINTS
 
 // -------------------------------------------------------------------------------------- types
 
@@ -41,6 +41,7 @@ typedef struct
   // data
   koro_func_t fn;
   void * ctx;
+  void * stack_mem;
   void * stack_end;
   void * stack_start;
 
