@@ -4,3 +4,11 @@
 CMakeLists.txt.user
 ios/libkorutin.xcodeproj/project.xcworkspace
 ios/libkorutin.xcodeproj/xcuserdata
+android/*.iml
+android/local.properties
+android/.gradle/
+android/.idea/
+android/app/*.iml
+android/app/.externalNativeBuild/
+android/app/build/
+android/build/
