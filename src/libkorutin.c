@@ -50,13 +50,13 @@ void koro_run(koro_t * h)
   _koro_set_current(h);
 
   #ifdef KORO_SET_HARDWARE_BREAKPOINTS
-  _koro_set_hw_break_at(h->stack_end);
+    _koro_set_hw_break_at(h->stack_end);
   #endif
 
   _koro_run(h);
 
   #ifdef KORO_SET_HARDWARE_BREAKPOINTS
-  _koro_clear_hw_break(h->stack_end);
+    _koro_clear_hw_break(h->stack_end);
   #endif
 
   _koro_set_current(NULL);
@@ -71,11 +71,11 @@ void koro_yield(void)
   assert(h->magic == koro_magic);
 
   #ifdef KORO_EXTERNAL_STACK_AWARE
-  #ifdef KORO_WATERMARKING
-  // check that final stack pointer is still watermarked
-  // otherwise there is a huge chance that stack was overflown
-  assert(*(uint32_t*)h->stack_end == koro_watermarking_const);
-  #endif
+    #ifdef KORO_WATERMARKING
+      // check that final stack pointer is still watermarked
+      // otherwise there is a huge chance that stack was overflown
+      assert(*(uint32_t*)h->stack_end == koro_watermarking_const);
+    #endif
   #endif
 
   _koro_yield(h);

@@ -4,6 +4,7 @@
 #ifdef KORO_BACKEND_CONTEXT
 
 #include "backend.h"
+#include <assert.h>
 
 // -------------------------------------------------------------------------------------- boost fcontext
 
@@ -43,20 +44,44 @@ typedef struct
 
 fcontext_t make_fcontext(void * sp, size_t size, void (*fn)(transfer_t));
 transfer_t jump_fcontext(fcontext_t const to, void * vp);
-transfer_t ontop_fcontext(fcontext_t const to, void * vp, transfer_t (*fn)(transfer_t));
+//transfer_t ontop_fcontext(fcontext_t const to, void * vp, transfer_t (*fn)(transfer_t));
 
 // --------------------------------------------------------------------------------------
 
+static void _executor(transfer_t t)
+{
+  koro_t * h = (koro_t*)t.data;
+  assert(h != NULL);
+
+  h->b = (uintptr_t)t.fctx;
+  h->fn(h->ctx);
+  h->finished = true;
+  jump_fcontext((fcontext_t)h->b, NULL);
+}
+
 void _koro_backend_init(koro_t * h)
 {
+  if(!h)
+    return;
+
+  size_t stack_size = (uint8_t*)h->stack_start - (uint8_t*)h->stack_end;
+  h->a = (uintptr_t)make_fcontext(h->stack_start, stack_size, _executor);
 }
 
 void _koro_run(koro_t * h)
 {
+  if(!h || h->finished)
+    return;
+
+  h->a = (uintptr_t)jump_fcontext((fcontext_t)h->a, h).fctx;
 }
 
 void _koro_yield(koro_t * h)
 {
+  if(!h)
+    return;
+
+  h->b = (uintptr_t)jump_fcontext((fcontext_t)h->b, NULL).fctx;
 }
 
 #endif

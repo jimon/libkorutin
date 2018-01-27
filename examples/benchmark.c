@@ -133,11 +133,24 @@ int main()
 {
   signal(SIGINT, int_handler);
 
+  #ifdef KORO_SET_HARDWARE_BREAKPOINTS
+    printf("WARNING: KORO_SET_HARDWARE_BREAKPOINTS is enabled, which will decrease performance a lot!\n");
+  #endif
+
   #ifdef KORO_BACKEND_SWITCH
     double perf_1024 = benchmark(1024, 1000);
     double perf_16384 = benchmark(16384, 50);
 
-    printf("results:\n");
+    printf("results for switch backend:\n");
+    printf("%u: %.1f switches/sec\n", 1024, perf_1024); fflush(stdout);
+    printf("%u: %.1f switches/sec\n", 16384, perf_16384); fflush(stdout);
+  #endif
+
+  #ifdef KORO_BACKEND_CONTEXT
+    double perf_1024 = benchmark(1024, 1000);
+    double perf_16384 = benchmark(16384, 50);
+
+    printf("results for context backend:\n");
     printf("%u: %.1f switches/sec\n", 1024, perf_1024); fflush(stdout);
     printf("%u: %.1f switches/sec\n", 16384, perf_16384); fflush(stdout);
   #endif
@@ -147,7 +160,7 @@ int main()
     double perf_64 = benchmark(64, 50);
     double perf_128 = benchmark(128, 10);
 
-    printf("results:\n");
+    printf("results for threads backend:\n");
     printf("%u: %.1f switches/sec\n", 32, perf_32); fflush(stdout);
     printf("%u: %.1f switches/sec\n", 64, perf_64); fflush(stdout);
     printf("%u: %.1f switches/sec\n", 128, perf_128); fflush(stdout);
