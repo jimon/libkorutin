@@ -21,7 +21,7 @@ TODO:
 
 ### Backends
 
-- PyPy stacklet switch, asm based, provides stack pointer switch. Fastest backend, but depends on ABI, doesn't support arm64.
+- PyPy stacklet switch, asm based, provides stack pointer switch. Very fast backend, doesn't support arm64.
 - Boost Context, asm based, provides stack pointer switch. Very fast backend, supports arm64.
 - Threads. Slow and doesn't scale (~50 coroutines is ok), uses malloc. It should work if all other options fail.
 - ucontext, TODO.
@@ -60,7 +60,7 @@ TODO:
 
 | OS             | CPU     | ABI    | Switch(1024) | Switch(16384) | Context(1024) | Context(16384) | Threads(32) | Threads(64) | Threads(128) |
 | -------------- | ------- | ------ | ------------ | ------------- | ------------- | -------------- | ----------- | ------------| ------------ |
-| Windows 10 x64 | i3770   | x86    | 12337349     | 10625162      |               |                | 176795      | 94395       | 45812        |
+| Windows 10 x64 | i3770   | x86    | 12337349     | 10625162      | 18056174      | 12268213       | 176795      | 94395       | 45812        |
 | Windows 10 x64 | i3770   | x64    | 20897959     | 9875828       | 17231499      | 8445864        | 205128      | 87551       | 47513        |
 | MacOS 10.13.2  | i4980hq | x86    | 11292405     | 8162099       | ?             | ?              | 46093       | 16470       | 7181         |
 | MacOS 10.13.2  | i4980hq | x64    | 22218395     | 15899470      | ?             | ?              | 46947       | 16641       | 7334         |

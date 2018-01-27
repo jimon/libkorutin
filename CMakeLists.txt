@@ -32,7 +32,7 @@ set(private_includes_core
 	${ROOT}/src
 )
 
-if(WIN32)
+if(WIN32 AND NOT MINGW)
 	enable_language(ASM_MASM)
 	if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
 		set(CMAKE_ASM_MASM_COMPILER ml64) # TODO
@@ -91,11 +91,78 @@ endif()
 
 if(BACKEND_CONTEXT)
 	# boost context asm folder have quite a nice name convention:
-	set(CONTEXT_ARCH "x86_64") # possible values: arm, arm64, i386, mips32, ppc32, ppc64, x86_64
-	set(CONTEXT_ABI  "ms")     # possible values: aapcs, ms, sysv, o32, ppc64
-	set(CONTEXT_EXE  "pe")     # possible values: elf, macho, pe, xcoff
-	set(CONTEXT_ASM  "masm")   # possible values: gas, masm, armasm
-	set(CONTEXT_EXT  "asm")    # possible values: asm, S
+	# CONTEXT_ARCH possible values: arm, arm64, i386, mips32, ppc32, ppc64, x86_64
+	# CONTEXT_ABI  possible values: aapcs, ms, sysv, o32, ppc64
+	# CONTEXT_EXE  possible values: elf, macho, pe, xcoff
+	# CONTEXT_ASM  possible values: gas, masm, armasm
+	# CONTEXT_EXT  possible values: asm, S
+
+	if(WIN32)
+		if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+			set(CONTEXT_ARCH "x86_64")
+		else()
+			set(CONTEXT_ARCH "i386")
+		endif()
+		set(CONTEXT_ABI "ms")
+	elseif(APPLE)
+		# chances are you will only run cmake on MacOS
+		if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+			set(CONTEXT_ARCH "x86_64")
+		else()
+			set(CONTEXT_ARCH "i386")
+		endif()
+		set(CONTEXT_ABI "sysv")
+	elseif(ANDROID_PLATFORM)
+		# see https://developer.android.com/ndk/guides/cmake.html
+		# "armeabi"
+		# "armeabi-v7a"
+		# "armeabi-v7a with NEON"
+		# "arm64-v8a"
+		# "mips"
+		# "mips64"
+		# "x86"
+		# "x86_64"
+		if("${ANDROID_ABI}" EQUAL "armeabi" OR "${ANDROID_ABI}" EQUAL "armeabi-v7a" OR "${ANDROID_ABI}" EQUAL "armeabi-v7a with NEON")
+			set(CONTEXT_ARCH "arm")
+			set(CONTEXT_ABI "aapcs")
+		elseif("${ANDROID_ABI}" EQUAL "arm64-v8a")
+			set(CONTEXT_ARCH "arm64")
+			set(CONTEXT_ABI "aapcs")
+		elseif("${ANDROID_ABI}" EQUAL "mips")
+			set(CONTEXT_ARCH "mips32")
+			set(CONTEXT_ABI "o32")
+		elseif("${ANDROID_ABI}" EQUAL "mips")
+			set(CONTEXT_ARCH "mips32")
+			set(CONTEXT_ABI "o32")
+		elseif("${ANDROID_ABI}" EQUAL "x86")
+			set(CONTEXT_ARCH "i386")
+			set(CONTEXT_ABI "sysv")
+		elseif("${ANDROID_ABI}" EQUAL "x86_64")
+			set(CONTEXT_ARCH "x86_64")
+			set(CONTEXT_ABI "sysv")
+		else()
+			message(FATAL_ERROR "unsupported flavour of android")
+		endif()
+	else()
+		message(FATAL_ERROR "unsupported ARCH/ABI")
+	endif()
+
+	if(WIN32)
+		set(CONTEXT_EXE "pe")
+	elseif(APPLE)
+		set(CONTEXT_EXE "macho")
+	else()
+		set(CONTEXT_EXE "elf")
+		# TODO xcoff
+	endif()
+
+	if(WIN32 AND NOT MINGW)
+		set(CONTEXT_ASM "masm") # TODO when we need armasm?
+		set(CONTEXT_EXT "asm")
+	else()
+		set(CONTEXT_ASM "gas")
+		set(CONTEXT_EXT "S")
+	endif()
 
 	set(src_context
 		${ROOT}/src/backends/context/context_backend.c

@@ -1,5 +1,6 @@
 
 .build/
+.build2/
 CMakeLists.txt.user
 ios/libkorutin.xcodeproj/project.xcworkspace
 ios/libkorutin.xcodeproj/xcuserdata
