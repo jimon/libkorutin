@@ -44,7 +44,7 @@ TODO:
 | MacOS      | x86    | ✓      | ✓       | ✓       |
 | MacOS      | x64    | ✓      | ✓       | ✓       |
 | iOS        | sim64  | ✓      | ✓       | ✓       |
-| iOS        | armv7  | ?      | ?       | ✓       |
+| iOS        | armv7  | ?      | ?       | ?       |
 | iOS        | arm64  | ✗      | ✓       | ✓       |
 | Android    | x86    | ?      | ?       | ?       |
 | Android    | x64    | ?      | ?       | ?       |
