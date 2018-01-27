@@ -38,8 +38,7 @@ if(WIN32 AND NOT MINGW)
 		set(CMAKE_ASM_MASM_COMPILER ml64) # TODO
 	endif()
 else()
-	enable_language(ASM) # needed for Android
-	enable_language(ASM-ATT)
+	enable_language(ASM)
 endif()
 
 # -----------------------------------------------------------------------------
@@ -111,6 +110,7 @@ if(BACKEND_CONTEXT)
 			set(CONTEXT_ARCH "x86_64")
 		else()
 			set(CONTEXT_ARCH "i386")
+			set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -arch i386") # TODO
 		endif()
 		set(CONTEXT_ABI "sysv")
 	elseif(ANDROID_PLATFORM)
