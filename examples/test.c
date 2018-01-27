@@ -63,10 +63,10 @@ int main()
   // printf is a stack hungry beast, so far my ballpark measurements:
   // - MacOS   needs ~2kb of stack for printf call
   // - Windows needs ~4kb of stack for printf call
-  uint8_t stack1[4 * 1024];
-  uint8_t stack2[4 * 1024];
-  uint8_t stack3[4 * 1024];
-  uint8_t stack4[4 * 1024];
+  uint8_t stack1[8 * 1024];
+  uint8_t stack2[8 * 1024];
+  uint8_t stack3[8 * 1024];
+  uint8_t stack4[8 * 1024];
 
   koro_init(&k1, test_co1, &k1, stack1, sizeof(stack1));
   koro_init(&k2, test_co2, &k2, stack2, sizeof(stack2));

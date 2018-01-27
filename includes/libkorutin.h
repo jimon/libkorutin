@@ -21,6 +21,10 @@ extern "C" {
 // and later use it to figure out peak stack usage (watermark)
 #define KORO_WATERMARKING
 
+// on supported platforms adds hardware breakpoint at the end of provided stack
+// this will allow to catch stack corruption when using stack heavy functions
+#define KORO_SET_HARDWARE_BREAKPOINTS
+
 // -------------------------------------------------------------------------------------- types
 
 // coroutine function
@@ -42,6 +46,11 @@ typedef struct
 
   // private data
   uintptr_t a, b;
+
+  // constant value that is used to check that context was not corrupted by stack overflow
+  // (in case if stack and context were placed nearby in memory)
+  // this is in the end because stacks grows downwards
+  uint32_t magic;
 } koro_t;
 
 // -------------------------------------------------------------------------------------- root functions
