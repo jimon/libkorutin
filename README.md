@@ -43,7 +43,6 @@ TODO:
 | FreeBSD    | x64    | ?      | ?       | ?       |
 | MacOS      | x86    | ✓      | ?       | ✓       |
 | MacOS      | x64    | ✓      | ?       | ✓       |
-| iOS        | sim32  | ?      | ?       | ?       |
 | iOS        | sim64  | ✓      | ?       | ✓       |
 | iOS        | armv7  | ?      | ?       | ✓       |
 | iOS        | arm64  | ✗      | ?       | ✓       |
