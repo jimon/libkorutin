@@ -8,7 +8,8 @@ This is a small proof-of-concept library to try to avoid common shortcomings:
 - It doesn’t change stack locations (unlike pypy stacklet).
 - It doesn’t allocate any memory.
 
-The heavy lifting in libkorutin is done by stack switching code from pypy's stacklet, which seems to be the most complete asm routine library on a market.
+The heavy lifting in libkorutin is done by different backends, mainly [PyPy stacklet](https://github.com/mozillazg/pypy/tree/master/rpython/translator/c/src/stacklet) and [Boost Context](https://github.com/boostorg/context/tree/develop/src/asm).
+We don't use libraries as is, instead we only use theirs assembly coded stack switching. I'm very grateful to their developers for all the hard work (supporting all ABI's/compilers is difficult).
 
 TODO:
 
