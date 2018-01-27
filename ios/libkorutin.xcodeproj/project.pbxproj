@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6619DEF8201D0B2700F59B1E /* context_backend.c in Sources */ = {isa = PBXBuildFile; fileRef = 6619DEA1201D0B2700F59B1E /* context_backend.c */; };
+		6619DF04201D0C4300F59B1E /* jump_ios.S in Sources */ = {isa = PBXBuildFile; fileRef = 6619DF02201D0C4300F59B1E /* jump_ios.S */; };
+		6619DF05201D0C4300F59B1E /* make_ios.S in Sources */ = {isa = PBXBuildFile; fileRef = 6619DF03201D0C4300F59B1E /* make_ios.S */; };
 		668160F0201CBF2C008F3F6A /* scheduling.c in Sources */ = {isa = PBXBuildFile; fileRef = 668160DA201CBF2C008F3F6A /* scheduling.c */; };
-		668160F1201CBF2C008F3F6A /* tinycthread.c in Sources */ = {isa = PBXBuildFile; fileRef = 668160DD201CBF2C008F3F6A /* tinycthread.c */; };
-		668160F2201CBF2C008F3F6A /* threads_backend.c in Sources */ = {isa = PBXBuildFile; fileRef = 668160DE201CBF2C008F3F6A /* threads_backend.c */; };
-		668160F5201CBF2C008F3F6A /* switch_backend.c in Sources */ = {isa = PBXBuildFile; fileRef = 668160EB201CBF2C008F3F6A /* switch_backend.c */; };
 		668160F6201CBF2C008F3F6A /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 668160ED201CBF2C008F3F6A /* debug.c */; };
 		668160F7201CBF2C008F3F6A /* libkorutin.c in Sources */ = {isa = PBXBuildFile; fileRef = 668160EE201CBF2C008F3F6A /* libkorutin.c */; };
 		668160FB201CBF74008F3F6A /* benchmark.c in Sources */ = {isa = PBXBuildFile; fileRef = 668160F9201CBF74008F3F6A /* benchmark.c */; };
@@ -23,19 +23,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6619DEA1201D0B2700F59B1E /* context_backend.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = context_backend.c; sourceTree = "<group>"; };
+		6619DF02201D0C4300F59B1E /* jump_ios.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = jump_ios.S; sourceTree = "<group>"; };
+		6619DF03201D0C4300F59B1E /* make_ios.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = make_ios.S; sourceTree = "<group>"; };
 		668160D6201CBF2C008F3F6A /* libkorutin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libkorutin.h; sourceTree = "<group>"; };
 		668160D8201CBF2C008F3F6A /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		668160D9201CBF2C008F3F6A /* backend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = backend.h; sourceTree = "<group>"; };
 		668160DA201CBF2C008F3F6A /* scheduling.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scheduling.c; sourceTree = "<group>"; };
-		668160DD201CBF2C008F3F6A /* tinycthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tinycthread.c; sourceTree = "<group>"; };
-		668160DE201CBF2C008F3F6A /* threads_backend.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threads_backend.c; sourceTree = "<group>"; };
-		668160DF201CBF2C008F3F6A /* tinycthread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinycthread.h; sourceTree = "<group>"; };
-		668160E2201CBF2C008F3F6A /* slp_platformselect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = slp_platformselect.h; sourceTree = "<group>"; };
-		668160E6201CBF2C008F3F6A /* switch_arm_gcc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = switch_arm_gcc.h; sourceTree = "<group>"; };
-		668160E8201CBF2C008F3F6A /* switch_ppc64_gcc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = switch_ppc64_gcc.h; sourceTree = "<group>"; };
-		668160EA201CBF2C008F3F6A /* switch_x86_64_gcc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = switch_x86_64_gcc.h; sourceTree = "<group>"; };
-		668160EB201CBF2C008F3F6A /* switch_backend.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = switch_backend.c; sourceTree = "<group>"; };
-		668160EC201CBF2C008F3F6A /* switch_x86_gcc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = switch_x86_gcc.h; sourceTree = "<group>"; };
 		668160ED201CBF2C008F3F6A /* debug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = debug.c; sourceTree = "<group>"; };
 		668160EE201CBF2C008F3F6A /* libkorutin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libkorutin.c; sourceTree = "<group>"; };
 		668160EF201CBF2C008F3F6A /* scheduling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scheduling.h; sourceTree = "<group>"; };
@@ -64,6 +58,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6619DE59201D0B2700F59B1E /* backends */ = {
+			isa = PBXGroup;
+			children = (
+				6619DE5A201D0B2700F59B1E /* context */,
+			);
+			path = backends;
+			sourceTree = "<group>";
+		};
+		6619DE5A201D0B2700F59B1E /* context */ = {
+			isa = PBXGroup;
+			children = (
+				6619DEA1201D0B2700F59B1E /* context_backend.c */,
+				6619DF02201D0C4300F59B1E /* jump_ios.S */,
+				6619DF03201D0C4300F59B1E /* make_ios.S */,
+			);
+			path = context;
+			sourceTree = "<group>";
+		};
 		668160D5201CBF2C008F3F6A /* includes */ = {
 			isa = PBXGroup;
 			children = (
@@ -76,48 +88,16 @@
 		668160D7201CBF2C008F3F6A /* src */ = {
 			isa = PBXGroup;
 			children = (
+				6619DE59201D0B2700F59B1E /* backends */,
 				668160D8201CBF2C008F3F6A /* debug.h */,
 				668160D9201CBF2C008F3F6A /* backend.h */,
 				668160DA201CBF2C008F3F6A /* scheduling.c */,
-				668160DB201CBF2C008F3F6A /* backends */,
 				668160ED201CBF2C008F3F6A /* debug.c */,
 				668160EE201CBF2C008F3F6A /* libkorutin.c */,
 				668160EF201CBF2C008F3F6A /* scheduling.h */,
 			);
 			name = src;
 			path = ../src;
-			sourceTree = "<group>";
-		};
-		668160DB201CBF2C008F3F6A /* backends */ = {
-			isa = PBXGroup;
-			children = (
-				668160DC201CBF2C008F3F6A /* threads */,
-				668160E0201CBF2C008F3F6A /* switch */,
-			);
-			path = backends;
-			sourceTree = "<group>";
-		};
-		668160DC201CBF2C008F3F6A /* threads */ = {
-			isa = PBXGroup;
-			children = (
-				668160DD201CBF2C008F3F6A /* tinycthread.c */,
-				668160DE201CBF2C008F3F6A /* threads_backend.c */,
-				668160DF201CBF2C008F3F6A /* tinycthread.h */,
-			);
-			path = threads;
-			sourceTree = "<group>";
-		};
-		668160E0201CBF2C008F3F6A /* switch */ = {
-			isa = PBXGroup;
-			children = (
-				668160E2201CBF2C008F3F6A /* slp_platformselect.h */,
-				668160E6201CBF2C008F3F6A /* switch_arm_gcc.h */,
-				668160E8201CBF2C008F3F6A /* switch_ppc64_gcc.h */,
-				668160EA201CBF2C008F3F6A /* switch_x86_64_gcc.h */,
-				668160EB201CBF2C008F3F6A /* switch_backend.c */,
-				668160EC201CBF2C008F3F6A /* switch_x86_gcc.h */,
-			);
-			path = switch;
 			sourceTree = "<group>";
 		};
 		668160F8201CBF74008F3F6A /* examples */ = {
@@ -236,13 +216,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				668160F2201CBF2C008F3F6A /* threads_backend.c in Sources */,
 				668160F6201CBF2C008F3F6A /* debug.c in Sources */,
+				6619DF05201D0C4300F59B1E /* make_ios.S in Sources */,
+				6619DEF8201D0B2700F59B1E /* context_backend.c in Sources */,
+				6619DF04201D0C4300F59B1E /* jump_ios.S in Sources */,
 				66906CD3201CBE9C008AAF8B /* ViewController.m in Sources */,
 				66906CDE201CBE9C008AAF8B /* main.m in Sources */,
 				66906CD0201CBE9C008AAF8B /* AppDelegate.m in Sources */,
-				668160F5201CBF2C008F3F6A /* switch_backend.c in Sources */,
-				668160F1201CBF2C008F3F6A /* tinycthread.c in Sources */,
 				668160F7201CBF2C008F3F6A /* libkorutin.c in Sources */,
 				668160F0201CBF2C008F3F6A /* scheduling.c in Sources */,
 				668160FB201CBF74008F3F6A /* benchmark.c in Sources */,
@@ -394,7 +374,7 @@
 				DEVELOPMENT_TEAM = NZ6HFVHS8J;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					KORO_BACKEND_THREADS,
+					KORO_BACKEND_CONTEXT,
 					KORO_BENCHMARK_NO_MAIN,
 				);
 				INFOPLIST_FILE = libkorutin/Info.plist;
@@ -412,7 +392,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NZ6HFVHS8J;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					KORO_BACKEND_THREADS,
+					KORO_BACKEND_CONTEXT,
 					KORO_BENCHMARK_NO_MAIN,
 				);
 				INFOPLIST_FILE = libkorutin/Info.plist;

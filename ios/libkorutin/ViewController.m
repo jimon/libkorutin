@@ -22,6 +22,18 @@
 	dispatch_queue_t backgroundQueue = dispatch_queue_create("com.beardsvibe.libkorutin", 0);
 
 	dispatch_async(backgroundQueue, ^{
+		#ifdef KORO_BACKEND_CONTEXT
+		double val1 = benchmark(1024, 100);
+		double val2 = benchmark(16384, 50);
+
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self.perf1 setText:[NSString stringWithFormat:@"1024: %f", val1]];
+			[self.perf2 setText:[NSString stringWithFormat:@"16384: %f", val2]];
+			[self.perf3 setText:[NSString stringWithFormat:@"----"]];
+		});
+		#endif
+
+		#ifdef KORO_BACKEND_THREADS
 		double val1 = benchmark(32, 50);
 		double val2 = benchmark(64, 20);
 		double val3 = benchmark(128, 10);
@@ -31,6 +43,7 @@
 			[self.perf2 setText:[NSString stringWithFormat:@"64: %f", val2]];
 			[self.perf3 setText:[NSString stringWithFormat:@"128: %f", val3]];
 		});
+		#endif
 	});
 }
 
