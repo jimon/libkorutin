@@ -245,8 +245,21 @@ endif()
 if(ANDROID_PLATFORM)
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
 
-	add_library(${PRJ_TARGET} SHARED ${ROOT}/android/app/src/cpp/main.c ${ROOT}/examples/benchmark.c ${ROOT}/examples/benchmark.h)
-	target_include_directories(${PRJ_TARGET} PRIVATE ${ANDROID_NDK}/sources/android/native_app_glue)
-	target_link_libraries(${PRJ_TARGET} PUBLIC ${PRJ_TARGET}_context android log)
-	target_compile_definitions(${PRJ_TARGET} PRIVATE KORO_BENCHMARK_NO_MAIN)
+	add_library(${PRJ_TARGET} SHARED
+		${ROOT}/android/app/src/cpp/main.c
+		${ROOT}/examples/benchmark.c
+		${ROOT}/examples/benchmark.h
+	)
+	target_include_directories(${PRJ_TARGET} PRIVATE
+		${ROOT}/examples
+		${ANDROID_NDK}/sources/android/native_app_glue
+	)
+	target_link_libraries(${PRJ_TARGET} PUBLIC
+		${PRJ_TARGET}_context
+		android
+		log
+	)
+	target_compile_definitions(${PRJ_TARGET} PRIVATE
+		KORO_BENCHMARK_NO_MAIN
+	)
 endif()
