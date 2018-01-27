@@ -50,7 +50,7 @@ void _koro_set_current(koro_t * h)
   current = h;
 }
 
-koro_t * _koro_get_current()
+koro_t * _koro_get_current(void)
 {
   return current;
 }

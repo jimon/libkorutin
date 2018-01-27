@@ -9,4 +9,4 @@
 // this helpers provide an easy (and thread aware way) to set/get currently running coroutine
 
 void     _koro_set_current(koro_t * h);
-koro_t * _koro_get_current();
+koro_t * _koro_get_current(void);

@@ -40,6 +40,7 @@
 		668160EE201CBF2C008F3F6A /* libkorutin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libkorutin.c; sourceTree = "<group>"; };
 		668160EF201CBF2C008F3F6A /* scheduling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scheduling.h; sourceTree = "<group>"; };
 		668160F9201CBF74008F3F6A /* benchmark.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = benchmark.c; sourceTree = "<group>"; };
+		668160FD201CD53D008F3F6A /* benchmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = benchmark.h; sourceTree = "<group>"; };
 		66906CCB201CBE9C008AAF8B /* libkorutin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = libkorutin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66906CCE201CBE9C008AAF8B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		66906CCF201CBE9C008AAF8B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -122,6 +123,7 @@
 		668160F8201CBF74008F3F6A /* examples */ = {
 			isa = PBXGroup;
 			children = (
+				668160FD201CD53D008F3F6A /* benchmark.h */,
 				668160F9201CBF74008F3F6A /* benchmark.c */,
 			);
 			name = examples;
@@ -391,6 +393,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					KORO_BACKEND_SWITCH,
+					KORO_BENCHMARK_NO_MAIN,
 				);
 				INFOPLIST_FILE = libkorutin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -406,7 +409,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 25UBQ6GR3R;
-				GCC_PREPROCESSOR_DEFINITIONS = KORO_BACKEND_SWITCH;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					KORO_BACKEND_SWITCH,
+					KORO_BENCHMARK_NO_MAIN,
+				);
 				INFOPLIST_FILE = libkorutin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.beardsvibe.libkorutin;

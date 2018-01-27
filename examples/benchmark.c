@@ -58,11 +58,16 @@ static void _co(co_ctx_t * ctx)
 }
 
 static volatile int run = 1;
+
+#ifndef KORO_BENCHMARK_NO_MAIN
+
 static void int_handler(int foo)
 {
   (void)foo;
   run = 0;
 }
+
+#endif
 
 double benchmark(size_t coroutine_count, size_t cycles_per_tick_count)
 {
@@ -122,6 +127,8 @@ double benchmark(size_t coroutine_count, size_t cycles_per_tick_count)
   return avg;
 }
 
+#ifndef KORO_BENCHMARK_NO_MAIN
+
 int main()
 {
   signal(SIGINT, int_handler);
@@ -149,3 +156,5 @@ int main()
 
   return 0;
 }
+
+#endif
