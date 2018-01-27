@@ -216,6 +216,11 @@ if(BACKEND_THREADS)
 	target_compile_definitions(${PRJ_TARGET}_threads PUBLIC
 		KORO_BACKEND_THREADS
 	)
+	if(NOT WIN32)
+		target_compile_options(${PRJ_TARGET}_threads PUBLIC
+			"-pthread"
+		)
+	endif()
 endif()
 
 # -----------------------------------------------------------------------------
