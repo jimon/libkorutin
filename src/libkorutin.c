@@ -42,6 +42,9 @@ void koro_init(koro_t * h, koro_func_t fn, void *ctx, uint8_t *stack_mem, size_t
 
 void koro_run(koro_t * h)
 {
+  if(!h)
+    return;
+
   assert(h->magic == koro_magic);
 
   if(_koro_get_current())
