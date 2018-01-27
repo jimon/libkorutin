@@ -38,6 +38,7 @@ if(WIN32 AND NOT MINGW)
 		set(CMAKE_ASM_MASM_COMPILER ml64) # TODO
 	endif()
 else()
+	enable_language(ASM) # needed for Android
 	enable_language(ASM-ATT)
 endif()
 
@@ -114,35 +115,25 @@ if(BACKEND_CONTEXT)
 		set(CONTEXT_ABI "sysv")
 	elseif(ANDROID_PLATFORM)
 		# see https://developer.android.com/ndk/guides/cmake.html
-		# "armeabi"
-		# "armeabi-v7a"
-		# "armeabi-v7a with NEON"
-		# "arm64-v8a"
-		# "mips"
-		# "mips64"
-		# "x86"
-		# "x86_64"
-		#if("${ANDROID_ABI}" EQUAL "armeabi" OR "${ANDROID_ABI}" EQUAL "armeabi-v7a" OR "${ANDROID_ABI}" EQUAL "armeabi-v7a with NEON" OR "${ANDROID_ABI}" EQUAL "")
+		# "armeabi", "armeabi-v7a", "armeabi-v7a with NEON", "arm64-v8a", "mips", "mips64", "x86", "x86_64"
+		if("${ANDROID_ABI}" STREQUAL "armeabi" OR "${ANDROID_ABI}" STREQUAL "armeabi-v7a" OR "${ANDROID_ABI}" STREQUAL "armeabi-v7a with NEON")
 			set(CONTEXT_ARCH "arm")
 			set(CONTEXT_ABI "aapcs")
-		#elseif("${ANDROID_ABI}" EQUAL "arm64-v8a")
-		#	set(CONTEXT_ARCH "arm64")
-		#	set(CONTEXT_ABI "aapcs")
-		#elseif("${ANDROID_ABI}" EQUAL "mips")
-		#	set(CONTEXT_ARCH "mips32")
-		#	set(CONTEXT_ABI "o32")
-		#elseif("${ANDROID_ABI}" EQUAL "mips")
-		#	set(CONTEXT_ARCH "mips32")
-		#	set(CONTEXT_ABI "o32")
-		#elseif("${ANDROID_ABI}" EQUAL "x86")
-		#	set(CONTEXT_ARCH "i386")
-		#	set(CONTEXT_ABI "sysv")
-		#elseif("${ANDROID_ABI}" EQUAL "x86_64")
-		#	set(CONTEXT_ARCH "x86_64")
-		#	set(CONTEXT_ABI "sysv")
-		#else()
-		#	message(FATAL_ERROR "unsupported flavour of android '${ANDROID_ABI}'")
-		#endif()
+		elseif("${ANDROID_ABI}" STREQUAL "arm64-v8a")
+			set(CONTEXT_ARCH "arm64")
+			set(CONTEXT_ABI "aapcs")
+		elseif("${ANDROID_ABI}" STREQUAL "mips")
+			set(CONTEXT_ARCH "mips32")
+			set(CONTEXT_ABI "o32")
+		elseif("${ANDROID_ABI}" STREQUAL "x86")
+			set(CONTEXT_ARCH "i386")
+			set(CONTEXT_ABI "sysv")
+		elseif("${ANDROID_ABI}" STREQUAL "x86_64")
+			set(CONTEXT_ARCH "x86_64")
+			set(CONTEXT_ABI "sysv")
+		else()
+			message(FATAL_ERROR "unsupported flavour of android '${ANDROID_ABI}'")
+		endif()
 	else()
 		message(FATAL_ERROR "unsupported ARCH/ABI")
 	endif()
@@ -252,7 +243,10 @@ endif()
 # -----------------------------------------------------------------------------
 
 if(ANDROID_PLATFORM)
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
+
 	add_library(${PRJ_TARGET} SHARED ${ROOT}/android/app/src/cpp/main.c ${ROOT}/examples/benchmark.c ${ROOT}/examples/benchmark.h)
-	target_link_libraries(${PRJ_TARGET} PUBLIC ${PRJ_TARGET}_context)
+	target_include_directories(${PRJ_TARGET} PRIVATE ${ANDROID_NDK}/sources/android/native_app_glue)
+	target_link_libraries(${PRJ_TARGET} PUBLIC ${PRJ_TARGET}_context android log)
 	target_compile_definitions(${PRJ_TARGET} PRIVATE KORO_BENCHMARK_NO_MAIN)
 endif()
