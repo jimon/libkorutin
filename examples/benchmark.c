@@ -166,6 +166,14 @@ int main()
     printf("%u: %.1f switches/sec\n", 128, perf_128); fflush(stdout);
   #endif
 
+  #ifdef KORO_BACKEND_EMSCRIPTEN
+    double perf_1024 = benchmark(1024, 1000);
+    double perf_16384 = benchmark(16384, 50);
+
+    printf("results for emscripten backend:\n");
+    printf("%u: %.1f switches/sec\n", 1024, perf_1024); fflush(stdout);
+    printf("%u: %.1f switches/sec\n", 16384, perf_16384); fflush(stdout);
+  #endif
 
   return 0;
 }

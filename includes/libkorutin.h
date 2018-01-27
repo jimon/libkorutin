@@ -42,6 +42,7 @@ typedef struct
   koro_func_t fn;
   void * ctx;
   void * stack_mem;
+  size_t stack_mem_size;
   void * stack_end;
   void * stack_start;
 

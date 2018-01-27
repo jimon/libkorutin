@@ -23,6 +23,7 @@ void koro_init(koro_t * h, koro_func_t fn, void *ctx, uint8_t *stack_mem, size_t
   h->fn = fn;
   h->ctx = ctx;
   h->stack_mem = stack_mem;
+  h->stack_mem_size = stack_mem_size;
   #ifdef KORO_EXTERNAL_STACK_AWARE
     h->stack_end = stack_mem;
     h->stack_start = align_ptr_low(stack_mem + stack_mem_size - 1); // stack grows down

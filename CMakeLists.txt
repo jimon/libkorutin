@@ -3,10 +3,11 @@ cmake_minimum_required(VERSION 3.3)
 
 # -----------------------------------------------------------------------------
 
-option(BACKEND_SWITCH  "build switch (asm based) backend (fast)"  ON)
-option(BACKEND_CONTEXT "build boost context based backend (fast)" ON)
-option(BACKEND_THREADS "build pthread based backend (slow)"       ON)
-option(EXAMPLES        "build examples"                           ON)
+option(BACKEND_SWITCH     "build switch (asm based) backend (fast)"  OFF)
+option(BACKEND_CONTEXT    "build boost context based backend (fast)" OFF)
+option(BACKEND_THREADS    "build pthread based backend (slow)"       OFF)
+option(BACKEND_EMSCRIPTEN "build emscripten based backend (slow)"    ON)
+option(EXAMPLES           "build examples"                           ON)
 
 # -----------------------------------------------------------------------------
 
@@ -32,13 +33,18 @@ set(private_includes_core
 	${ROOT}/src
 )
 
-if(WIN32 AND NOT MINGW)
-	enable_language(ASM_MASM)
-	if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
-		set(CMAKE_ASM_MASM_COMPILER ml64) # TODO
+# -----------------------------------------------------------------------------
+# enable asm in cmake
+
+if(NOT EMSCRIPTEN)
+	if(WIN32 AND NOT MINGW)
+		enable_language(ASM_MASM)
+		if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+			set(CMAKE_ASM_MASM_COMPILER ml64) # TODO
+		endif()
+	else()
+		enable_language(ASM)
 	endif()
-else()
-	enable_language(ASM)
 endif()
 
 # -----------------------------------------------------------------------------
@@ -219,11 +225,53 @@ if(BACKEND_THREADS)
 	if(NOT WIN32)
 		target_link_libraries(${PRJ_TARGET}_threads PRIVATE pthread)
 	endif()
+
+	if(EMSCRIPTEN)
+		# it should work in theory, but https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer says:
+		# "Note that SharedArrayBuffer was disabled by default in all major browsers on 5 January, 2018 in response to Spectre."
+		# and looks like the only browsers that supported this out of the box was Chrome 60+ and Firefox 57+
+		target_compile_options(${PRJ_TARGET}_threads PUBLIC "-s" "USE_PTHREADS=1")
+		set_target_properties(${PRJ_TARGET}_threads PROPERTIES LINK_FLAGS "-s USE_PTHREADS=1")
+	endif()
+endif()
+
+# -----------------------------------------------------------------------------
+
+if(BACKEND_EMSCRIPTEN)
+	if(NOT EMSCRIPTEN)
+		message(FATAL_ERROR emscripten backend only builds with emscripten)
+	endif()
+
+	set(src_emscripten
+		${ROOT}/src/backends/emscripten/emscripten_backend.c
+	)
+
+	add_library(${PRJ_TARGET}_emscripten STATIC
+		${headers_core}
+		${src_core}
+		${src_emscripten}
+	)
+	target_include_directories(${PRJ_TARGET}_emscripten PUBLIC
+		${public_includes_core}
+	)
+	target_include_directories(${PRJ_TARGET}_emscripten PRIVATE
+		${private_includes_core}
+	)
+	target_compile_definitions(${PRJ_TARGET}_emscripten PUBLIC
+		KORO_BACKEND_EMSCRIPTEN
+	)
+
+	target_compile_options(${PRJ_TARGET}_emscripten PUBLIC "-s" "ASYNCIFY=1")
+	set_target_properties(${PRJ_TARGET}_emscripten PROPERTIES LINK_FLAGS "-s ASYNCIFY=1")
 endif()
 
 # -----------------------------------------------------------------------------
 
 if(EXAMPLES)
+	if(EMSCRIPTEN)
+		set(CMAKE_EXECUTABLE_SUFFIX ".html")
+	endif()
+
 	if(BACKEND_SWITCH)
 		add_executable(${PRJ_TARGET}_test_switch ${ROOT}/examples/test.c)
 		target_link_libraries(${PRJ_TARGET}_test_switch PUBLIC ${PRJ_TARGET}_switch)
@@ -246,6 +294,26 @@ if(EXAMPLES)
 
 		add_executable(${PRJ_TARGET}_benchmark_threads ${ROOT}/examples/benchmark.c)
 		target_link_libraries(${PRJ_TARGET}_benchmark_threads PUBLIC ${PRJ_TARGET}_threads)
+
+		if(EMSCRIPTEN)
+			target_compile_options(${PRJ_TARGET}_test_threads PUBLIC "-s" "USE_PTHREADS=1")
+			set_target_properties(${PRJ_TARGET}_test_threads PROPERTIES LINK_FLAGS "-s USE_PTHREADS=1")
+
+			target_compile_options(${PRJ_TARGET}_benchmark_threads PUBLIC "-s" "USE_PTHREADS=1")
+			set_target_properties(${PRJ_TARGET}_benchmark_threads PROPERTIES LINK_FLAGS "-s USE_PTHREADS=1")
+		endif()
+	endif()
+
+	if(BACKEND_EMSCRIPTEN)
+		add_executable(${PRJ_TARGET}_test_emscripten ${ROOT}/examples/test.c)
+		target_link_libraries(${PRJ_TARGET}_test_emscripten PUBLIC ${PRJ_TARGET}_emscripten)
+		target_compile_options(${PRJ_TARGET}_test_emscripten PUBLIC "-s" "ASYNCIFY=1")
+		set_target_properties(${PRJ_TARGET}_test_emscripten PROPERTIES LINK_FLAGS "-s ASYNCIFY=1 -s TOTAL_MEMORY=268435456")
+
+		add_executable(${PRJ_TARGET}_benchmark_emscripten ${ROOT}/examples/benchmark.c)
+		target_link_libraries(${PRJ_TARGET}_benchmark_emscripten PUBLIC ${PRJ_TARGET}_emscripten)
+		target_compile_options(${PRJ_TARGET}_benchmark_emscripten PUBLIC "-s" "ASYNCIFY=1")
+		set_target_properties(${PRJ_TARGET}_benchmark_emscripten PROPERTIES LINK_FLAGS "-s ASYNCIFY=1 -s TOTAL_MEMORY=268435456")
 	endif()
 endif()
 

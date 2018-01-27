@@ -17,7 +17,6 @@ TODO:
 - Basic scheduler.
 - Channels.
 - Ability to run a coroutine from another coroutine.
-- Stack switching for emscripten/js.
 - More fallback stack switching solution in case if asm fails.
 
 ### Backends
@@ -25,34 +24,34 @@ TODO:
 - PyPy stacklet switch, asm based, provides stack pointer switch. Very fast backend, doesn't support arm64.
 - Boost Context, asm based, provides stack pointer switch. Very fast backend, supports arm64.
 - Threads. Slow and doesn't scale (~50 coroutines is ok), uses malloc. It should work if all other options fail.
+- Emscripten based coroutines, the only way to run it in the browsers, has two flavours `ASYNCIFY` and `EMTERPRETIFY`.
 - ucontext, TODO.
 - setjmp, TODO.
-- emscripten, TODO.
 
 ### Platform support
 
-| OS         | ABI    | Switch | Context | Threads |
-| ---------- | ------ | ------ | ------- | ------- |
-| Windows    | x86    | ✓      | ✓       | ✓       |
-| Windows    | x64    | ✓      | ✓       | ✓       |
-| Linux      | x32    | ?      | ?       | ?       |
-| Linux      | x86    | ?      | ?       | ?       |
-| Linux      | x64    | ✓      | ✓       | ✓       |
-| Linux      | armv7  | ?      | ?       | ?       |
-| Linux      | arm64  | ?      | ?       | ?       |
-| FreeBSD    | x86    | ?      | ?       | ?       |
-| FreeBSD    | x64    | ✓      | ✓       | ✓       |
-| MacOS      | x86    | ✓      | ✓       | ✓       |
-| MacOS      | x64    | ✓      | ✓       | ✓       |
-| iOS        | sim64  | ✓      | ✓       | ✓       |
-| iOS        | armv7  | ✗      | ✓       | ✓       |
-| iOS        | arm64  | ✗      | ✓       | ✓       |
-| Android    | x86    | ?      | ?       | ?       |
-| Android    | x64    | ?      | ?       | ?       |
-| Android    | armv7  | ?      | ✓       | ?       |
-| Android    | arm64  | ?      | ?       | ?       |
-| Emscripten | asm.js | ✗      | ✗       | ✗       |
-| Emscripten | wasm   | ✗      | ✗       | ✗       |
+| OS         | ABI    | Switch | Context | Threads | Emscripten |
+| ---------- | ------ | ------ | ------- | ------- | ---------- |
+| Windows    | x86    | ✓      | ✓       | ✓       | ✗          |
+| Windows    | x64    | ✓      | ✓       | ✓       | ✗          |
+| Linux      | x32    | ?      | ?       | ?       | ✗          |
+| Linux      | x86    | ?      | ?       | ?       | ✗          |
+| Linux      | x64    | ✓      | ✓       | ✓       | ✗          |
+| Linux      | armv7  | ?      | ?       | ?       | ✗          |
+| Linux      | arm64  | ?      | ?       | ?       | ✗          |
+| FreeBSD    | x86    | ?      | ?       | ?       | ✗          |
+| FreeBSD    | x64    | ✓      | ✓       | ✓       | ✗          |
+| MacOS      | x86    | ✓      | ✓       | ✓       | ✗          |
+| MacOS      | x64    | ✓      | ✓       | ✓       | ✗          |
+| iOS        | sim64  | ✓      | ✓       | ✓       | ✗          |
+| iOS        | armv7  | ✗      | ✓       | ✓       | ✗          |
+| iOS        | arm64  | ✗      | ✓       | ✓       | ✗          |
+| Android    | x86    | ?      | ?       | ?       | ✗          |
+| Android    | x64    | ?      | ?       | ?       | ✗          |
+| Android    | armv7  | ?      | ✓       | ?       | ✗          |
+| Android    | arm64  | ?      | ?       | ?       | ✗          |
+| Emscripten | asm.js | ✗      | ✗       | ✗       | ✓          |
+| Emscripten | wasm   | ✗      | ✗       | ✗       | ?          |
 
 ### Performance
 
@@ -71,3 +70,9 @@ TODO:
 | Android 6.0.1    | MSM8974-AC  | armv7  | -            | -             | 2633119       | 2018506        | ?           | ?           | ?            |
 | FreeBSD 11.1     | E5-2630L v2 | x64    | 16254737     | 9077585       | 11294780      | 6821553        | 29798       | 9772        | 4436         |
 | Ubuntu 17.10     | E5-2650L v3 | x64    | 14368457     | 11775094      | 13073079      | 10392292       | 49764       | 15540       | 5341         |
+
+And some results for Emscripten:
+
+| Browser          | Flavour     | Emscripten(1024) | Emscripten(16384) |
+| ---------------- | ----------- | ---------------- | ----------------- |
+| Chrome 63        | ASYNCIFY    | 9170502          | 6879678           |
