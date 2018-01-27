@@ -19,7 +19,7 @@ extern "C" {
 
 // enable or disable watermarking, this fills whole stack with 0xfee1dead value
 // and later use it to figure out peak stack usage (watermark)
-//#define KORO_WATERMARKING
+#define KORO_WATERMARKING
 
 // on supported platforms adds hardware breakpoint at the end of provided stack
 // this will allow to catch stack corruption when using stack heavy functions

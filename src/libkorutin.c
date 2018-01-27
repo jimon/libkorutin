@@ -70,10 +70,12 @@ void koro_yield(void)
   koro_t * h = _koro_get_current();
   assert(h->magic == koro_magic);
 
+  #ifdef KORO_EXTERNAL_STACK_AWARE
   #ifdef KORO_WATERMARKING
   // check that final stack pointer is still watermarked
   // otherwise there is a huge chance that stack was overflown
   assert(*(uint32_t*)h->stack_end == koro_watermarking_const);
+  #endif
   #endif
 
   _koro_yield(h);
