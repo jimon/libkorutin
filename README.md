@@ -30,28 +30,28 @@ TODO:
 
 ### Platform support
 
-| OS         | ABI    | Switch | Threads | Context | Threads |
-| ---------- | ------ | ------ | ------- | ------- | ------- |
-| Windows    | x86    | ✓      | ✓       | ✓       | ✓       |
-| Windows    | x64    | ✓      | ✓       | ✓       | ✓       |
-| Linux      | x86    | ?      | ?       | ?       | ?       |
-| Linux      | x64    | ?      | ?       | ?       | ?       |
-| Linux      | armv7  | ?      | ?       | ?       | ?       |
-| Linux      | arm64  | ?      | ?       | ?       | ?       |
-| FreeBSD    | x86    | ?      | ?       | ?       | ?       |
-| FreeBSD    | x64    | ?      | ?       | ?       | ?       |
-| MacOS      | x86    | ✓      | ✓       | ?       | ✓       |
-| MacOS      | x64    | ✓      | ✓       | ?       | ✓       |
-| iOS        | sim32  | ✓      | ✓       | ?       | ✓       |
-| iOS        | sim64  | ✓      | ✓       | ?       | ✓       |
-| iOS        | armv7  | ?      | ✓       | ?       | ✓       |
-| iOS        | arm64  | ✗      | ✓       | ?       | ✓       |
-| Android    | x86    | ?      | ?       | ?       | ?       |
-| Android    | x64    | ?      | ?       | ?       | ?       |
-| Android    | armv7  | ?      | ?       | ?       | ?       |
-| Android    | arm64  | ?      | ?       | ?       | ?       |
-| Emscripten | asm.js | ✗      | ✗       | ✗       | ✗       |
-| Emscripten | wasm   | ✗      | ✗       | ✗       | ✗       |
+| OS         | ABI    | Switch | Context | Threads |
+| ---------- | ------ | ------ | ------- | ------- |
+| Windows    | x86    | ✓      | ✓       | ✓       |
+| Windows    | x64    | ✓      | ✓       | ✓       |
+| Linux      | x86    | ?      | ?       | ?       |
+| Linux      | x64    | ?      | ?       | ?       |
+| Linux      | armv7  | ?      | ?       | ?       |
+| Linux      | arm64  | ?      | ?       | ?       |
+| FreeBSD    | x86    | ?      | ?       | ?       |
+| FreeBSD    | x64    | ?      | ?       | ?       |
+| MacOS      | x86    | ✓      | ?       | ✓       |
+| MacOS      | x64    | ✓      | ?       | ✓       |
+| iOS        | sim32  | ✓      | ?       | ✓       |
+| iOS        | sim64  | ✓      | ?       | ✓       |
+| iOS        | armv7  | ?      | ?       | ✓       |
+| iOS        | arm64  | ✗      | ?       | ✓       |
+| Android    | x86    | ?      | ?       | ?       |
+| Android    | x64    | ?      | ?       | ?       |
+| Android    | armv7  | ?      | ?       | ?       |
+| Android    | arm64  | ?      | ?       | ?       |
+| Emscripten | asm.js | ✗      | ✗       | ✗       |
+| Emscripten | wasm   | ✗      | ✗       | ✗       |
 
 ### Performance
 
