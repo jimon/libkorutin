@@ -4,10 +4,10 @@ Coroutines are a nice concept, but at the moment there are barely any production
 
 - Extensive multi-platform functionality
 - To not change stack location (unlike for example pypy stacklet)
-- No allocate any memory
+- To not allocate any memory
 
 The heavy lifting in libkorutin is done by different backends, mainly [PyPy stacklet](https://github.com/mozillazg/pypy/tree/master/rpython/translator/c/src/stacklet) and [Boost Context](https://github.com/boostorg/context/tree/develop/src/asm).
-However the libraries is not used as is, but instead their assembly-coded stack switch is implemented. Thanks to their devoted developers this project can be realised (supporting all ABI's/compilers is difficult).
+However the libraries are not used as is, but instead their assembly-coded stack switch is implemented. Thanks to their devoted developers this project can be realised (supporting all ABI's/compilers is difficult).
 
 TODO:
 
