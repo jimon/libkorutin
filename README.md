@@ -1,29 +1,27 @@
 # libkorutin
 
-Coroutines are a nice concept, but there are barely any C libraries that could be widely used in production at the moment. Libraries that available have random shortcomings here and there.
+Coroutines are a nice concept, but at the moment there are barely any production-ready C libraries as they suffer from various shortcomings. This is a small proof-of-concept library to avoid the more common problems:
 
-This is a small proof-of-concept library to try to avoid common shortcomings:
-
-- It should work on all popular platforms.
-- It doesn’t change stack locations (unlike pypy stacklet).
-- It doesn’t allocate any memory.
+- Extensive multi-platform functionality
+- To not change stack location (unlike for example pypy stacklet)
+- To not allocate any memory
 
 The heavy lifting in libkorutin is done by different backends, mainly [PyPy stacklet](https://github.com/mozillazg/pypy/tree/master/rpython/translator/c/src/stacklet) and [Boost Context](https://github.com/boostorg/context/tree/develop/src/asm).
-We don't use libraries as is, instead we only use theirs assembly coded stack switching. I'm very grateful to their developers for all the hard work (supporting all ABI's/compilers is difficult).
+However the libraries are not used as is, but instead their assembly-coded stack switch is implemented. Thanks to their devoted developers this project can be realised (supporting all ABI's/compilers is difficult).
 
 TODO:
 
-- Extensive built-in self check suite.
-- Basic scheduler.
-- Channels.
-- Ability to run a coroutine from another coroutine.
-- More fallback stack switching solution in case if asm fails.
+- Extensive built-in self check suite
+- Basic scheduler
+- Channels
+- Ability to run a coroutine from another coroutine
+- More fallback stack switching solution in case if asm fails
 
-### Backends
+### Backend description
 
-- PyPy stacklet switch, asm based, provides stack pointer switch. Very fast backend, doesn't support arm64.
-- Boost Context, asm based, provides stack pointer switch. Very fast backend, supports arm64.
-- Threads. Slow and doesn't scale (~50 coroutines is ok), uses malloc. It should work if all other options fail.
+- PyPy is used as an ASM based stack pointer switch. This backend is very fast, but do not support arm64
+- Boost Context is used as an ASM based stack pointer switch. This backend is also very fast, and supports arm64
+- Threads offer low scalability (~50 coroutines is ok), is quite slow, and uses malloc. However if no other work, this is a last resort.
 - Emscripten based coroutines, the only way to run it in the browsers, has two flavours `ASYNCIFY` and `EMTERPRETIFY`.
 - ucontext, TODO.
 - setjmp, TODO.
