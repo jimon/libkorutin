@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.3)
 
 # -----------------------------------------------------------------------------
 
-option(BACKEND_SWITCH     "build switch (asm based) backend (fast)"  OFF)
-option(BACKEND_CONTEXT    "build boost context based backend (fast)" OFF)
-option(BACKEND_THREADS    "build pthread based backend (slow)"       OFF)
-option(BACKEND_EMSCRIPTEN "build emscripten based backend (slow)"    ON)
+option(BACKEND_SWITCH     "build switch (asm based) backend (fast)"  ON)
+option(BACKEND_CONTEXT    "build boost context based backend (fast)" ON)
+option(BACKEND_THREADS    "build pthread based backend (slow)"       ON)
+option(BACKEND_EMSCRIPTEN "build emscripten based backend (slow)"    OFF)
 option(EXAMPLES           "build examples"                           ON)
 
 # -----------------------------------------------------------------------------
